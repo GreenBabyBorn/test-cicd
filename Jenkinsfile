@@ -6,8 +6,8 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-					 sh 'll'
-					 sh 'pwd'
+		sh 'ls -al'
+		sh 'pwd'
                 echo 'main test ci/cd'
             }
         }
