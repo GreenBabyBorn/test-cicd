@@ -13,7 +13,7 @@ pipeline {
             withCredentials([sshUserPrivateKey(credentialsId: 'ssh-greenbabyborn-green', keyFileVariable: 'keyfile')]) {
                sh 'rsync -e "ssh -i ${keyfile} -o StrictHostKeyChecking=no" -avz . "green@greenbabyborn.ru:~/test-cicd"'
             }
-            sshagent(['ssh-iswebdev-green']) {
+            sshagent(['ssh-greenbabyborn-green']) {
                sh 'ssh -o StrictHostKeyChecking=no green@greenbabyborn.ru uptime'
                sh 'ls -al'
                sh 'pwd'
