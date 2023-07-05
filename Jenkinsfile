@@ -14,9 +14,11 @@ pipeline {
                sh 'rsync -e "ssh -i ${keyfile} -o StrictHostKeyChecking=no" -avz . "green@greenbabyborn.ru:~/test-cicd"'
             }
             sshagent(['ssh-greenbabyborn-green']) {
-               sh 'ssh -o StrictHostKeyChecking=no green@greenbabyborn.ru uptime'
-               sh 'ls -al'
-               sh 'pwd'
+               sh '''ssh -o StrictHostKeyChecking=no green@greenbabyborn.ru
+                    uptime
+               pwd
+               ls -al
+                    '''
             }
             echo 'main test ci/cd'
          }
