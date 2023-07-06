@@ -11,7 +11,7 @@ pipeline {
                     Для отправки проекта на сервер используется rsync, для авторизации используется SSH private key,
                       который был добавлен в Credentianls Jenkin'sa (credentialsId).
             */
-            //========================================================================================================================================================
+                //========================================================================================================================================================
                 /*
             // Без использования плагинов Jenkins
 
@@ -33,10 +33,10 @@ pipeline {
                sh 'rsync -e "ssh -o StrictHostKeyChecking=no" -avz . "green@greenbabyborn.ru:~/test-cicd"'
 
                // Ниже можно писать команды, которые будут выполняться на сервере
-               sh '''ssh -o StrictHostKeyChecking=no green@greenbabyborn.ru
-                       uptime \
-                       pwd \
-                       ls -al \
+               sh '''ssh -o StrictHostKeyChecking=no green@greenbabyborn.ru &
+                       uptime &
+                       pwd &
+                       ls -al &
                '''
             }
             echo 'main test ci/cd'
