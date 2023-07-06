@@ -34,9 +34,9 @@ pipeline {
 
                // Ниже можно писать команды, которые будут выполняться на сервере
                sh '''ssh -o StrictHostKeyChecking=no green@greenbabyborn.ru
-                       uptime
-                       pwd
-                       ls -al
+                       uptime \
+                       pwd \
+                       ls -al \
                '''
             }
             echo 'main test ci/cd'
