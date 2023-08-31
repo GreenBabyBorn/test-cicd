@@ -2,6 +2,8 @@
 
 Для отправки проекта на сервер, используется rsync в связке с ssh, который служит для авторизации.
 
+**Важное замечание: здесь идет речь о ситуации, когда Jenkins и ваш проект находятся на разных серверах**
+
 ![Jenkins CI/CD pipeline](scheme.png "Jenkins CI/CD pipeline")
 
 ## Инструкция
@@ -35,11 +37,12 @@ pipeline {
             withCredentials([sshUserPrivateKey(credentialsId: 'ТУТ-ID-Credentials', keyFileVariable: 'keyfile')]) {
                sh 'rsync -e "ssh -i ${keyfile} -o StrictHostKeyChecking=no" -avz . "user@host.ru:~/test-cicd"'
 
-               sh '''ssh -i ${keyfile} -o StrictHostKeyChecking=no user@host.ru
+               sh '''ssh -i ${keyfile} -o StrictHostKeyChecking=no -tt user@host.ru << EOF
                        uptime
                        pwd
                        ls -al
-               '''
+                       exit
+               EOF'''
             }
          }
       }
@@ -84,11 +87,12 @@ pipeline {
             sshagent(['ТУТ-ID-Credentials']) {
                sh 'rsync -e "ssh -o StrictHostKeyChecking=no" -avz . "user@host.ru:~/test-cicd"'
 
-               sh '''ssh -o StrictHostKeyChecking=no user@host.ru
+               sh '''ssh -o StrictHostKeyChecking=no -tt user@host.ru << EOF
                        uptime
                        pwd
                        ls -al
-               '''
+                       exit
+               EOF'''
             }
          }
       }
@@ -98,3 +102,24 @@ pipeline {
 ```
 
 Принцип работы pipeline остается тот же, но теперь нам не надо передавать везде приватный ключ, за нас это делает теперь SSHAgent.
+
+---
+
+# Запуск команд на удаленном сервере
+
+Для того чтобы выполнять команды на сервере из нашего pipeline, мы будем использовать тот же _SSH_. В примерах приведенных выше, есть такая команда:
+
+```
+sh '''ssh -o StrictHostKeyChecking=no -tt user@host.ru << EOF
+                       uptime
+                       pwd
+                       ls -al
+                       exit
+               EOF'''
+```
+
+В зависимости от того, используем лм мы плагин или нет, нам при подключении по SSH придется либо передавать приватный ключ(если без плагина), либо нет (если используем плагин, т.к. ключ у нас находится в "окружении" и SSH его подхватит в тот момент когда мы будем подключаться к нашему серверу)
+
+Вместо `uptime pwd ls -al` могут быть ваши команды, которые выполнятся на вашем СЕРВЕРЕ, а не в Jenkins. Команда `exit` является обязательной, и если не написать её, то ваш pipeline будет беконечным, т.к. сессия SSH не будет закрыта.
+
+Решение с выполнением команд именно таким образом не явлеяется эталонным, это всего лишь одно из решений, которое просто работает. Возможно есть более лаконичные решения данной задачи.

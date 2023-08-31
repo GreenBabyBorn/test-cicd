@@ -18,10 +18,11 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ssh-greenbabyborn-green', keyFileVariable: 'keyfile')]) {
                sh 'rsync -e "ssh -i ${keyfile} -o StrictHostKeyChecking=no" -avz . "green@greenbabyborn.ru:~/test-cicd"'
                // Ниже можно писать команды, которые будут выполняться на сервере
-               sh '''ssh -i ${keyfile} -o StrictHostKeyChecking=no green@greenbabyborn.ru << EOF
+               sh '''ssh -i ${keyfile} -o StrictHostKeyChecking=no -tt green@greenbabyborn.ru << EOF
                        uptime
                        pwd
                        ls -al
+                       exit
                EOF'''
                 }
                 */
