@@ -33,10 +33,11 @@ pipeline {
                sh 'rsync -e "ssh -o StrictHostKeyChecking=no" -avz . "green@greenbabyborn.ru:~/test-cicd"'
 
                // Ниже можно писать команды, которые будут выполняться на сервере
-               sh '''ssh -o StrictHostKeyChecking=no green@greenbabyborn.ru << EOF
+               sh '''ssh -o StrictHostKeyChecking=no -tt green@greenbabyborn.ru << EOF
                        uptime
                        pwd
                        ls -al
+                       exit
                EOF'''
             }
             echo 'main test ci/cd'
